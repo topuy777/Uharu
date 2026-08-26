@@ -1,1 +1,281 @@
-# Uharu
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan & Download Transaksi Pemain</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f4f4f9;
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 20px;
+    }
+
+    .control-panel {
+        width: 698px;
+        max-width: 100%;
+        background: #ffffff;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .control-panel h3 {
+        margin-top: 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 3px;
+        color: #555;
+    }
+
+    .form-group input {
+        padding: 6px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .btn-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-container button {
+        flex: 1;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-download {
+        background-color: #28a745;
+    }
+
+    .btn-download:hover {
+        background-color: #218838;
+    }
+
+    .btn-copy {
+        background-color: #007bff;
+    }
+
+    .btn-copy:hover {
+        background-color: #0056b3;
+    }
+
+    .box {
+        width: 698px;
+        height: 128px;
+        background: #ffffff;
+        border: 1px solid #000000;
+        overflow: hidden; 
+        padding: 3px;
+        display: block; 
+    }
+
+    .fixed-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .fixed-table td {
+        border: 1px solid #ffffff;
+        padding: 2px 4px;
+    }
+
+    #notif {
+        margin-top: 10px;
+        font-size: 13px;
+        color: green;
+        font-weight: bold;
+        height: 20px;
+    }
+
+    @media (max-width: 730px) {
+        .control-panel, .box {
+            width: calc(100% - 20px);
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <h3>Panel Pengaturan Data & Aksi</h3>
+        <div class="form-group">
+            <label for="inputNama">Nama Pemain:</label>
+            <input type="text" id="inputNama" value="akubatman" oninput="updateData()">
+        </div>
+        <div class="form-group">
+            <label for="inputTanggal">Tanggal Tarik Dana (Withdraw):</label>
+            <input type="text" id="inputTanggal" value="2026-08-26 19:13:52" oninput="updateData()">
+        </div>
+        <div class="form-group">
+            <label for="inputTanggalDepo">Tanggal Deposit:</label>
+            <input type="text" id="inputTanggalDepo" value="2026-08-26 17:54:11" oninput="updateData()">
+        </div>
+        <div class="form-group">
+            <label for="inputDebet">Nominal Debet:</label>
+            <input type="text" id="inputDebet" value="2,400,000" oninput="updateData()">
+        </div>
+        <div class="form-group">
+            <label for="inputKredit">Nominal Kredit:</label>
+            <input type="text" id="inputKredit" value="500,947" oninput="updateData()">
+        </div>
+
+        <div class="btn-container">
+            <button class="btn-download" onclick="downloadImage()">Download Gambar (PNG)</button>
+            <button class="btn-copy" onclick="copyImage()">Salin Gambar ke Clipboard</button>
+        </div>
+        <div id="notif" align="center"></div>
+    </div>
+
+    <div class="box" id="captureBox">
+        <div align="center">
+            <font color="#0000CC" size="2.5">
+                <b>
+                    <!-- Ikon Kiri: aku.png -->
+                    <img src="aku.png" width="12" height="12" border="0" style="vertical-align: middle;">
+                    
+                    Transaksi&nbsp;&nbsp;Pemain&nbsp;:&nbsp;<span id="displayNama">akubatman</span>&nbsp;
+                    
+                    <!-- Ikon Kanan: kamu.png -->
+                    <a href="javascript:popUp('depo_user_det.php?user=akubatman')" style="text-decoration:none" id="linkPopup">
+                        <img src="kamu.png" width="10" height="10" border="0" style="vertical-align: middle;">
+                    </a>
+                </b>
+            </font>
+            
+            <table class="fixed-table">
+                <tr bgcolor="#F5E363">
+                    <td align="center"><font size="2" color="#000000" face="verdana"><b>Tanggal</b></font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana"><b>Keterangan</b></font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana"><b>Status</b></font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana"><b>Debet</b></font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana"><b>Kredit</b></font></td>
+                </tr>
+
+                <tr bgcolor="#FFDBB7">
+                    <td align="center" colspan="3"><font size="2" color="#000000" face="verdana"><b>&nbsp;</b></font></td>
+                    <td align="center" colspan="2"><font size="2" color="#000000" face="verdana"><b>Last Balance</b></font></td>
+                </tr>
+
+                <tr bgcolor="#EFEFEF">
+                    <td align="center"><font size="2" color="#000000" face="verdana"><span id="displayTanggal1">2026-08-26 19:13:52</span></font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana">Tarik Dana</font></td>
+                    <td align="center"><font size="2" color="red" face="verdana">Withdraw</font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana"><span id="displayDebet">2,400,000</span></font></td>
+                    <td align="center"><font size="2" color="#0000FF" face="verdana">0</font></td>
+                </tr>
+
+                <tr bgcolor="#FFDBB7">
+                    <td align="center"><font size="2" color="#000000" face="verdana"><span id="displayTanggalDepo">2026-08-26 17:54:11</span></font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana">Deposit PGA</font></td>
+                    <td align="center"><font size="2" color="red" face="verdana">Deposit</font></td>
+                    <td align="center"><font size="2" color="#000000" face="verdana">0</font></td>
+                    <td align="center"><font size="2" color="#0000FF" face="verdana"><span id="displayKredit">500,947</span></font></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function updateData() {
+            let nama = document.getElementById('inputNama').value;
+            let tanggal = document.getElementById('inputTanggal').value;
+            let tanggalDepo = document.getElementById('inputTanggalDepo').value;
+            let debet = document.getElementById('inputDebet').value;
+            let kredit = document.getElementById('inputKredit').value;
+
+            document.getElementById('displayNama').innerText = nama;
+            document.getElementById('displayTanggal1').innerText = tanggal;
+            document.getElementById('displayTanggalDepo').innerText = tanggalDepo;
+            document.getElementById('displayDebet').innerText = debet;
+            document.getElementById('displayKredit').innerText = kredit;
+
+            document.getElementById('linkPopup').href = "javascript:popUp('depo_user_det.php?user=" + encodeURIComponent(nama) + "')";
+        }
+
+        function showNotif(text, isError = false) {
+            let notif = document.getElementById('notif');
+            notif.style.color = isError ? "red" : "green";
+            notif.innerText = text;
+            setTimeout(() => { notif.innerText = ""; }, 4000);
+        }
+
+        function downloadImage() {
+            let boxElement = document.getElementById('captureBox');
+            showNotif("Memproses gambar...");
+            
+            html2canvas(boxElement, { 
+                scale: 2, 
+                useCORS: true,
+                allowTaint: true 
+            }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'transaksi-' + document.getElementById('inputNama').value + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showNotif("Berhasil mendownload gambar!");
+            }).catch(err => {
+                showNotif("Gagal: Jalankan lewat Local Server (Live Server)", true);
+                console.error(err);
+            });
+        }
+
+        function copyImage() {
+            let boxElement = document.getElementById('captureBox');
+            showNotif("Menyalin gambar...");
+
+            html2canvas(boxElement, { 
+                scale: 2, 
+                useCORS: true,
+                allowTaint: true 
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    try {
+                        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                        showNotif("Berhasil menyalin gambar ke clipboard!");
+                    } catch (err) {
+                        showNotif("Gagal menyalin (Gunakan Local Server)", true);
+                        console.error(err);
+                    }
+                });
+            }).catch(err => {
+                showNotif("Gagal memproses gambar.", true);
+                console.error(err);
+            });
+        }
+    </script>
+
+</body>
+</html>
